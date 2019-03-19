@@ -1,30 +1,55 @@
 package com.capgemini.exception.main;
 
+import java.util.regex.Pattern;
+
 import com.capgemini.exception.exception.CountryNotValidException;
+import com.capgemini.exception.exception.TaxNotEligibleException;
 
 public class TaxCalculator {
+
 	private String employeeName;
+	private boolean isIndian;
 	private double employeeSalary;
-	private boolean employeeIsIndian;
-	
+
 	public TaxCalculator() {
 		super();
 		
 	}
 
-	public TaxCalculator(String employeeName, double employeeSalary, boolean employeeIsIndian) {
+	public TaxCalculator(String employeeName, boolean isIndian, double employeeSalary)
+			throws CountryNotValidException, EmployeeNameInvalidException, TaxNotEligibleException {
 		super();
-		this.employeeName = employeeName;
+		if (Pattern.matches("[a-zA-Z]+", employeeName))
+			this.employeeName = employeeName;
+		else
+			throw new EmployeeNameInvalidException("invalid name");
+		if (isIndian)
+			this.isIndian = isIndian;
+		else
+			throw new CountryNotValidException("invalid country");
 		this.employeeSalary = employeeSalary;
-		this.employeeIsIndian = employeeIsIndian;
 	}
 
-	public String getEmployeeName() {
-		return employeeName;
+	public double taxCalculator(double sal) throws TaxNotEligibleException,CountryNotValidException, EmployeeNameInvalidException{
+		if (sal > 100000 && isIndian == true) {
+			return ((sal * 8) / 100);
+		} else if (sal > 50000 && sal < 100000 && isIndian == true) {
+			return ((sal * 6) / 100);
+		} else if (sal > 30000 && sal < 50000 && isIndian == true) {
+			return ((sal * 5) / 100);
+		} else if (sal > 10001 && sal < 30000 && isIndian == true) {
+			return ((sal * 4) / 100);
+		} else
+			System.out.println("error");
+			throw new TaxNotEligibleException("Not applicable for tax");
 	}
 
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public boolean isIndian() {
+		return isIndian;
+	}
+
+	public void setIndian(boolean isIndian) {
+		this.isIndian = isIndian;
 	}
 
 	public double getEmployeeSalary() {
@@ -35,24 +60,4 @@ public class TaxCalculator {
 		this.employeeSalary = employeeSalary;
 	}
 
-	public boolean isEmployeeIsIndian() {
-		return employeeIsIndian;
-	}
-
-	public void setEmployeeIsIndian(boolean employeeIsIndian) {
-		this.employeeIsIndian = employeeIsIndian;
-	}
-	
-	public double calculateTax() throws CountryNotValidException {
-		
-		double taxAmount = 0;
-		
-		if(!employeeIsIndian) {
-			throw new CountryNotValidException("Entered Country is not valid!!!");
-		}
-		
-		return taxAmount;
-	}
-	
-	
 }
